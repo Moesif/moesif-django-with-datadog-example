@@ -1,6 +1,8 @@
 from ddtrace.span import Span
 from ddtrace.internal.writer import TraceWriter
 
+# writing to console so we can see the data is captured by Datadog.
+
 class ConsoleWriter(TraceWriter):
     def recreate(self):
         # This method is required by the TraceWriter interface but can be left empty

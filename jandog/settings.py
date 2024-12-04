@@ -11,11 +11,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from ddtrace import tracer
-from custom_writer import ConsoleWriter
-
-# Set the custom writer to log traces to the console
-tracer.configure(writer=ConsoleWriter())
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,6 +44,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'moesifdjango.middleware.moesif_middleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -130,3 +126,26 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MOESIF_MIDDLEWARE = {
+    # Your Moesif Application ID
+    'APPLICATION_ID': 'Your Application ID',
+
+    # Optional: Enable debug mode to log requests locally
+    'DEBUG': True,
+
+    # Optional: Function to skip logging certain requests
+    'SKIP': lambda request: request.path.startswith('/admin'),
+
+    # Optional: Function to mask sensitive data in requests
+    'MASK_EVENT_MODEL': lambda event_model: event_model,
+
+    # Optional: Function to identify users
+    'IDENTIFY_USER': lambda request, response: request.user.id if request.user.is_authenticated else None,
+
+    # Optional: Function to identify companies
+    'IDENTIFY_COMPANY': lambda request, response: None,
+
+    # Optional: Function to add metadata to events
+    'ADD_EVENT_METADATA': lambda request, response: {'foo': 'bar'},
+}
