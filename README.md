@@ -8,9 +8,9 @@ is a middleware that makes integration with Moesif easy for Django based applica
 This is an example of django application with Moesif integrated. This example is based
 on the quick start [tutorials of Django](https://docs.djangoproject.com/en/1.11/intro/) and [Django rest framework](http://www.django-rest-framework.org/#quickstart).
 
-# data dog configuration
+## Data Dog configuration
 
-In this example. dd trace uses a console writer so that all the datadog captured data is printed to console. But feel free to modify
+In this example. dd trace uses a console writer so that all the datadog captured data is printed to console. But feel free to modify. In `manage.py`:
 
 ```python
 from ddtrace import patch_all, tracer
