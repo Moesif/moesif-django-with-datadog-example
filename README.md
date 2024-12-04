@@ -1,4 +1,4 @@
-# Moesif Django with Datadata dd-trace, Example
+# Moesif Django with Datadog Example
 
 Django is a web application framework that many developers use to serve APIs.
 
