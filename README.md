@@ -29,7 +29,7 @@ tracer.configure(writer=ConsoleWriter())
 moesifdjango's [github readme](https://github.com/Moesif/moesifdjango) already documented
 the steps for setup Moesif Django. But here is the key file where the Moesif integration is added:
 
-- `mysite/settings.py` added Moesif middleware related settings.
+- `jandog/settings.py` added Moesif middleware related settings.
 
 ## How to run this example with WSGI
 
