@@ -38,7 +38,7 @@ the steps for setup Moesif Django. But here is the key file where the Moesif int
 2. Install packages:
 * `pip install -r requirements.txt`
 
-3. Be sure to edit the `mysite/setting.py` to add your Moesif application id.
+3. Be sure to edit the `jandog/setting.py` to add your Moesif application id.
 
   ```python
   MOESIF_MIDDLEWARE = {
