@@ -2,14 +2,6 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-from ddtrace import patch_all, tracer
-from custom_writer import ConsoleWriter
-
-patch_all()
-# Set the custom writer to log traces to the console for easier debugging
-# but you can use any writer you want after verify writing to console works.
-tracer.configure(writer=ConsoleWriter())
-
 
 def main():
     """Run administrative tasks."""
