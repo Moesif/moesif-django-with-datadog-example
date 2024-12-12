@@ -38,13 +38,20 @@ the steps for setup Moesif Django. But here is the key file where the Moesif int
 2. Install packages:
 * `pip install -r requirements.txt`
 
-3. Be sure to edit the `jandog/setting.py` to add your Moesif application id.
 
-  ```python
-  MOESIF_MIDDLEWARE = {
-      'APPLICATION_ID': 'Your Moesif Collector Application Id',
-  }
-  ```
+3. Add Environment Variables.
+
+copy over `.env-template` to `.env` and fill in your Datadog Configuration and Moesif Application Id
+
+```
+DD_AGENT_HOST=
+DD_API_KEY=your_api_key_here
+DD_TRACE_AGENT_PORT=
+DD_TRACE_ENABLED=true
+DD_TRACE_DEBUG=true
+DD_SERVICE=python-django-example
+MOESIF_APPLICATION_ID=
+```
 
 Your Moesif Collector Application Id can be found in the [_Moesif Portal_](https://www.moesif.com/).
 After signing up for a Moesif account, your Moesif Application Id will be displayed during the onboarding steps.
@@ -56,8 +63,10 @@ and then clicking _API Keys_.
 4. Run the service:
 
 ```bash
-python manage.py runserver
+ddtrace-run python manage.py runserver
 ```
+
+If you prefer not to use `ddtrace-run`, you can also use `patch_all()` in code.
 
 **Note** : If you get `OperationalError` with Exception Value: `no such table`, that means the schema has not been generated in database yet.
 
