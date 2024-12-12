@@ -9,8 +9,28 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+from ddtrace import patch_all, Pin, patch, tracer
+
+load_dotenv()
+
+
+# Below to custom writer to log traces to the console for easier debugging
+# but you can use any writer you want after verify writing to console works.
+# tracer.configure(writer=ConsoleWriter())
+
+# if you are not using ddtrace-run you should use patch_all below.
+# patch_all()
+
+tracer.configure(
+    settings={
+        'FILTERS': [],
+        'DD_TAGS': 'team:debugging'
+    }
+)
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,8 +48,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -44,7 +62,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'moesifdjango.middleware.moesif_middleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -52,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'moesifdjango.middleware.moesif_middleware',
 ]
 
 ROOT_URLCONF = 'jandog.urls'
@@ -128,24 +146,56 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MOESIF_MIDDLEWARE = {
-    # Your Moesif Application ID
-    'APPLICATION_ID': 'Your Application ID',
+    "APPLICATION_ID": os.environ.get("MOESIF_APPLICATION_ID"),
+    "SKIP": lambda request, response: not request.path.startswith("/api/"),
+    "SKIP_OUTGOING": lambda request, response: True,
+    "IDENTIFY_USER": lambda request, response: str(request.user.id),
+    "IDENTIFY_COMPANY": lambda request, response: str(request.user.primary_account),
+    "LOG_BODY": True,
+    # # Ignore requests made by card-service.
+    "LOG_BODY_OUTGOING": False,
+    "GET_METADATA": lambda request, response: {
+         "company_name": 'abc',
+    },
+    "REQUEST_HEADER_MASKS": (
+        # Contains auth token
+        "authorization",
+        # Contains the users jwt and refresh token
+        "cookie",
+        # Reduce noise
+        "x-akamai-config-log-detail",
+        "x-datadog-parent-id",
+        "x-datadog-sampling-priority",
+        "x-datadog-trace-id",
+        "x-edgeconnect-session-id",
+        "x-envoy-attempt-count",
+        "x-envoy-decorator-operation",
+        "x-envoy-external-address",
+        "x-envoy-peer-metadata",
+        "x-envoy-peer-metadata-id",
+        "x-forwarded-for",
+        "x-forwarded-proto",
+        "x-request-id",
+    ),
+    "LOCAL_DEBUG": True,
+    "GET_SESSION_TOKEN": lambda request, response: "xxxxxxxxxx",
+}
 
-    # Optional: Enable debug mode to log requests locally
-    'DEBUG': True,
 
-    # Optional: Function to skip logging certain requests
-    'SKIP': lambda request: request.path.startswith('/admin'),
-
-    # Optional: Function to mask sensitive data in requests
-    'MASK_EVENT_MODEL': lambda event_model: event_model,
-
-    # Optional: Function to identify users
-    'IDENTIFY_USER': lambda request, response: request.user.id if request.user.is_authenticated else None,
-
-    # Optional: Function to identify companies
-    'IDENTIFY_COMPANY': lambda request, response: None,
-
-    # Optional: Function to add metadata to events
-    'ADD_EVENT_METADATA': lambda request, response: {'foo': 'bar'},
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
+    },
 }
