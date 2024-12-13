@@ -1,5 +1,5 @@
 ddtrace==2.8.0
 Django==4.2.11
 djangorestframework==3.15.2
-moesifdjango==2.3.11
+-e /Users/Xingheng/Moesif/repos/moesifdjango
 python-dotenv==1.0.1

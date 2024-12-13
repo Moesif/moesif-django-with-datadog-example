@@ -69,7 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'moesifdjango.middleware.moesif_middleware',
+    # 'moesifdjango.middleware.moesif_middleware',
 ]
 
 ROOT_URLCONF = 'jandog.urls'
@@ -177,7 +177,7 @@ MOESIF_MIDDLEWARE = {
         "x-forwarded-proto",
         "x-request-id",
     ),
-    "LOCAL_DEBUG": True,
+    # "LOCAL_DEBUG": True,
     "GET_SESSION_TOKEN": lambda request, response: "xxxxxxxxxx",
 }
 
