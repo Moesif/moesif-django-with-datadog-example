@@ -1,5 +1,7 @@
 ddtrace==2.8.0
 Django==4.2.11
 djangorestframework==3.15.2
--e /Users/Xingheng/Moesif/repos/moesifdjango
+moesifdjango==2.3.11
+# installing local version
+#-e ../moesifdjango
 python-dotenv==1.0.1

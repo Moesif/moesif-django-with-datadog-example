@@ -16,13 +16,17 @@ from ddtrace import patch_all, Pin, patch, tracer
 
 load_dotenv()
 
+# The patch_all() function and the automatic instrumentation provided by ddtrace-run or
+# ddtrace.bootstrap.sitecustomize are idempotent. This means that if an integration has already been patched,
+# calling patch_all() again will not re-patch it or cause duplicate instrumentation.
 
-# Below to custom writer to log traces to the console for easier debugging
-# but you can use any writer you want after verify writing to console works.
-# tracer.configure(writer=ConsoleWriter())
+# While it is generally unnecessary to use both ddtrace-run (or ddtrace.bootstrap.sitecustomize) and patch_all(),
+# there are scenarios where you might combine them: Ensuring Patching in Complex Environments:
+# In some cases, such as with uWSGI, the instrumentation provided by ddtrace-run or ddtrace.bootstrap.sitecustomize
+# might not work as expected due to initialization timing issues. Adding patch_all()
+# in your application code ensures that integrations are patched correctly.
 
-# if you are not using ddtrace-run you should use patch_all below.
-# patch_all()
+patch_all()
 
 tracer.configure(
     settings={
@@ -31,6 +35,9 @@ tracer.configure(
     }
 )
 
+# Below to custom writer to log traces to the console for easier debugging
+# but you can use any writer you want after verify writing to console works.
+# tracer.configure(writer=ConsoleWriter())
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
